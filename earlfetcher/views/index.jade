@@ -3,3 +3,12 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+
+  div.requestedUrl
+    form(name="requestedUrl", action="/", method="get")
+      input(type="text", name="theUrl")
+
+  if theUrl
+    p= theUrl
+  else
+    p No url yet!
