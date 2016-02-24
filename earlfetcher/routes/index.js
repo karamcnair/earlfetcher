@@ -17,6 +17,9 @@ router.get('/', function(req, res, next) {
 	if (urlToFetch != undefined) {
 		request(urlToFetch, function (error, response, body) {
 	 		if (!error && response.statusCode == 200) {
+
+	 			var markedupHTML = markupHTML(body);
+
 	   		 	console.log(body); // Show the HTML for the Google homepage.	
    		 	  	res.render('index', { title: 'earlfetcher', theUrl: urlToFetch, retrievedHTML: body });
 	  		} else if (!error) {
@@ -39,23 +42,9 @@ router.get('/', function(req, res, next) {
 // 	res.render('html', { title: 'no thanks, I already got one!', theUrl: urlToFetch});
 // });
 
-function getHTML(urlToFetch) {
+function markupHTML(rawHTML) {
 
-	// returns array of [host, port, path]. Port value is not required.
-	// I'm going to only support HTTP URLs at the moment.
-
-	// var parsedUrl = parseUrl(urlToFetch);
-	
-	// if (parsdeUrl.length != 3) {
-	// 	return "Sorry, we were unable to parse: " + urlToFetch;
-	// }
-	// else
-	request('http://www.google.com', function (error, response, body) {
- 		if (!error && response.statusCode == 200) {
-   		 	console.log(body); // Show the HTML for the Google homepage.
-   		 	return body;
-  		};
-	});
+	return rawHTML;
 };
 
 module.exports = router;

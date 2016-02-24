@@ -1,0 +1,115 @@
+// Although it would be possible to subclass the Tag type, I tend to 
+// prefer composition over inheritance and for this size of object, 
+// subclassing feels like overkill to me.
+
+// This class STRICTLY requires that it be passed a string that defines a legal
+// HTML element tag. It can be an opening tag, a closing tag, or a self-closing tag,
+// but it has to be valid (i.e. '<html attr=> >'' will not work)
+
+// var Tag = function(string) {
+function Tag(string) {
+
+	// perform validation - return error/throw exception 
+	// if the preconditions aren't met.
+	string = string.trim();
+
+	var type = "";
+	var tagstring = string;
+	var name = "kara?";
+	var attributes = "loopy";
+
+	// We're guaranteed that the 1st char is "<", last 2 are "/>"
+	function parseSelfClosingTag() {
+		parseTag(1,tagstring.length-2);
+	}	
+
+	// We're guaranteed 1st & last char are "<" and ">"
+	function parseOpenTag() {
+		parseTag(1,tagstring.length-1);
+	}
+
+	// We're guaranteed that the 1st 2 chars are "</", last 1 is ">"
+	function parseCloseTag() {
+		parseTag(2,tagstring.length-1);
+	}
+
+	function parseTag(start, end) {
+		var newString = tagstring.substring(start,end);
+
+		console.log("newString = ", newString);
+
+		// the tag name is the first 'word' in the new string
+		// TBD - need to fix word boundary for hyphen
+		var re  = /(\w+)/;
+		var results = newString.match(re);
+
+		// if there's nothing here, we have a problem
+		name = results[0];
+		attributes = newString.substring(name.length).trim();
+	}
+
+	// if it ends in "/>", it's a self-closing tag
+	if(tagstring.substring(tagstring.length-2) === "/>")  
+		type = 'selfclosing';
+	// else if it starts with "</" it's a close tag
+	else if (tagstring.charAt(1) === '/') 
+		type = 'close';
+	else
+		type = 'open';
+
+	switch (type) {
+		case 'selfclosing':
+			parseSelfClosingTag();
+			break;
+		case 'close':
+			parseCloseTag();
+			break;
+		case 'open':
+			parseOpenTag();
+			break;
+		default:
+			console.log("in default case");
+	}
+
+	this.getType = function() { return type;}
+	this.getName = function() { return name;}
+	this.getAttributes = function() { return attributes;}
+}
+
+Tag.prototype.encodedString = function() {
+
+		// can improve by not padding the space if no attributes
+
+		if (this.getType() === 'open') {
+			return "<div className=" + this.getName() + ">&lt;" + this.getName() + " " + this.getAttributes() + "&gt;</div>";
+		} else if (this.getType() === 'close') {
+			return "<div className=" + this.getName() + ">&lt;" + this.getName() + " " + this.getAttributes() + "&gt;</div>";
+		} else if (this.getType() === 'selfclosing') {
+			return "<div className=" + this.getName() + ">&lt;" + this.getName() + " " + this.getAttributes() + "/&gt;</div>";
+		} 
+		else
+			return "";
+}
+
+Tag.prototype.getType = function () { return this.getType(); }
+Tag.prototype.getName = function () { return this.getName(); }
+Tag.prototype.getAttributes = function () { return this.getAttributes(); }
+
+module.exports = Tag;
+
+var tag = new Tag("<img src='http://www.google.com/img'  />");
+console.log("type = " + tag.getType());
+console.log("name = " + tag.getName());
+console.log("attribs = " + tag.getAttributes());
+
+console.log("encodedString = " + tag.encodedString());
+
+
+tag = new Tag("</body>");
+console.log("type = " + tag.getType());
+console.log("name = " + tag.getName());
+
+console.log("encodedString = " + tag.encodedString());
+
+
+

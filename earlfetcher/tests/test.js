@@ -4,7 +4,7 @@ var should = require('should'),
 
 describe('loading express', function () {
 
-	var homeHomeoutput = 
+	var homepageOutput = 
 	'<!DOCTYPE html><html><head><title>Express</title><link rel="stylesheet" href="/stylesheets/style.css"></head><body><h1>Express</h1><p>Welcome to Express</p></body></html>';
 
 	it('responds to /', function testHome(done) {
@@ -18,7 +18,7 @@ describe('loading express', function () {
 		request(app)
 			.get('/')
 			.end( function(err, res) {
-				res.text.should.equal(homeHomeoutput);
+				res.text.should.equal(homepageOutput);
 				done();
 			});
 	});
@@ -29,3 +29,4 @@ describe('loading express', function () {
 			.expect(404, done);
 	});
 });
+
