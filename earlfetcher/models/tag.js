@@ -83,7 +83,7 @@ Tag.prototype.encodedString = function() {
 		if (this.getType() === 'open') {
 			return "<div className=" + this.getName() + ">&lt;" + this.getName() + " " + this.getAttributes() + "&gt;</div>";
 		} else if (this.getType() === 'close') {
-			return "<div className=" + this.getName() + ">&lt;" + this.getName() + " " + this.getAttributes() + "&gt;</div>";
+			return "<div className=" + this.getName() + ">&lt;/" + this.getName() +"&gt;</div>";
 		} else if (this.getType() === 'selfclosing') {
 			return "<div className=" + this.getName() + ">&lt;" + this.getName() + " " + this.getAttributes() + "/&gt;</div>";
 		} 

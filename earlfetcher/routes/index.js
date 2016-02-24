@@ -20,11 +20,8 @@ router.get('/', function(req, res, next) {
 		request(urlToFetch, function (error, response, body) {
 	 		if (!error && response.statusCode == 200) {
 
-	 			var summaryTable = markupHTML(body);
+	 			var summaryTable = parseHTML(body);
 
-	 			console.log("in router", summaryTable);
-
-	   		 	// console.log(body); 
    		 	  	res.render('index', { title: 'earlfetcher', theUrl: urlToFetch, summaryTable: summaryTable, retrievedHTML: body });
 	  		} else if (!error) {
 	  			res.render('index', { title: 'earlfetcher', theUrl: urlToFetch, retrievedHTML: "Could not fetch HTML: " + response.statusCode + " " + error + "." } );
@@ -39,9 +36,9 @@ router.get('/', function(req, res, next) {
 });
 
 
-function markupHTML(rawHTML) {
+function parseHTML(rawHTML) {
 
-	var testText=	'<!DOCTYPE html><html><head><title>Express</title><link rel="stylesheet" href="/stylesheets/style.css"></head><body><h1>Express</h1><p>Welcome to Express</p><p>Welcome to Express</p><p>Welcome to Express</p><p>Welcome to Express</p></body></html>';
+	var testText='<!DOCTYPE html><html><head><title>Express</title><link rel="stylesheet" href="/stylesheets/style.css"></head><body><h1>Express</h1><p>Welcome to Express</p><p>Welcome to Express</p><p>Welcome to Express</p><p>Welcome to Express</p></body></html>';
 ;
 	var parsedText = "";
 
@@ -100,9 +97,60 @@ function markupHTML(rawHTML) {
 	parser.write(testText);
 	parser.end();
 
-	var summaryTable = tagHash.toSummary();
+	var summaryTable = tagHash.getTagHash();
 
+	injectSpans(testText);
 	return summaryTable;
 };
+
+
+
+// at the moment, this just walks the string & only logs tags. The string itself should be returned unchanged.
+function injectSpans(string) {
+	var testText='<!DOCTYPE html><html><head><title>Express</title><link rel="stylesheet" href="/stylesheets/style.css"></head><body><h1>Express</h1><p>Welcome to Express</p><p>Welcome to Express</p><p>Welcome to Express</p><p>Welcome to Express</p></body></html>';
+
+	var outputText = "";
+	var openTagRE = /</;
+	var directiveOrCDataRE = /(<![\s\S]*?>)/;
+	var commentRE =  /(<!--[\s\S]*?-->)/;
+    var tagRE=/<[^>]*?(?:(?:('|")[^\1]*?\1)[^>]*?)*>/;
+
+    var nextOpenBracket = openTagRE.exec(string);
+
+    while (nextOpenBracket) { 
+    	// if this is a comment, we want to grab the entire comment & just copy it over as-is.
+    	var commentText = commentRE.exec(string[nextOpenBracket.index]);
+    	if (commentText) {
+    		// copy it over & skip along!
+    		outputText+= commentText[0];
+    		string = string.substring(commentText.index + string.length);
+    	} 
+    	else {
+    		var directiveOrCDataText = directiveOrCDataRE.exec(string[nextOpenBracket.index]);
+    		if (directiveOrCDataText) {
+ 			    // copy it over & skip along!
+	    		outputText += directiveOrCDataText[0];
+	    		string = string.substring(directiveOrCDataText.index + string.length);
+	    	}
+	    	else {
+	    		// pretty sure we have a tag here
+	    		    var thisTag = tagRE.exec(string);
+				    // console.log(thisTag);
+
+				    if(thisTag) {
+				        stringy = thisTag[0];
+				        console.log(stringy);
+				        string =  string.substring(thisTag.index + stringy.length);
+				        var tag = new Tag(thisTag[0]);
+				        outputText += tag.encodedString();
+    			}
+	    	}
+    	}
+     nextOpenBracket = openTagRE.exec(string);
+    }
+
+    console.log(outputText);
+    return outputText;
+}
 
 module.exports = router;
