@@ -97,19 +97,6 @@ Tag.prototype.getAttributes = function () { return this.getAttributes(); }
 
 module.exports = Tag;
 
-var tag = new Tag("<img src='http://www.google.com/img'  />");
-console.log("type = " + tag.getType());
-console.log("name = " + tag.getName());
-console.log("attribs = " + tag.getAttributes());
-
-console.log("encodedString = " + tag.encodedString());
-
-
-tag = new Tag("</body>");
-console.log("type = " + tag.getType());
-console.log("name = " + tag.getName());
-
-console.log("encodedString = " + tag.encodedString());
 
 
 
