@@ -15,8 +15,8 @@ function Tag(string) {
 
 	var type = "";
 	var tagstring = string;
-	var name = "kara?";
-	var attributes = "loopy";
+	var name = "";
+	var attributes = "";
 
 	// We're guaranteed that the 1st char is "<", last 2 are "/>"
 	function parseSelfClosingTag() {

@@ -13,5 +13,15 @@ block content
   else
     p No url yet!
 
+  p
+    summaryTable
+
+
+   p !{summaryTable}
+
+   p ---
+    each val, key in summaryTable
+        p #{key}: open: #{val.open} close: #{val.close}
+
   if retrievedHTML
     pre= retrievedHTML

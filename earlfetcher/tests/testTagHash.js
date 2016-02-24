@@ -1,9 +1,9 @@
 var should = require('should'),
 	request = require('supertest')
 	assert = require('assert'),
-	Tag = require('../models/tag');
+	TagHash = require('../models/taghash');
 
-describe('testing Tag', function () {
+describe('testing TagHash', function () {
 
 console.log(tag.encodedString());
 
@@ -40,6 +40,14 @@ console.log(tag.encodedString());
 	});
 
 	it('is a self-closing tag without attributes', function testHome(done) {
+		var tag = new Tag("<br />");
+		assert.equal(tag.getName(),"br");
+		assert.equal(tag.getType(), "selfclosing");
+		assert.equal(tag.getAttributes(),"");
+		done();
+	});
+
+	it('is multiple tags - both opening & closing', function testHome(done) {
 		var tag = new Tag("<br />");
 		assert.equal(tag.getName(),"br");
 		assert.equal(tag.getType(), "selfclosing");
