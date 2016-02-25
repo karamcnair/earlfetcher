@@ -14,8 +14,6 @@ var entities = new Entities();
 router.get('/', function(req, res, next) {
 
 	var urlToFetch = req.query['theUrl']
-	// console.log("req.query : ",  req.query);
-	// console.log('urlToFetch: ' + urlToFetch);
 
 	var retrievedHTML = "";
 	var testText='<!DOCTYPE html><html><head><title>Express</title><link rel="stylesheet" href="/stylesheets/style.css"></head><body><h1>Express</h1><p>Welcome to Express</p><p>Welcome to Express</p><p>Welcome to Express</p><p>Welcome to Express</p></body></html>';
@@ -44,56 +42,14 @@ router.get('/', function(req, res, next) {
 
 function parseHTML(rawHTML) {
 
-	var parsedText = "";
-
 	var parser = new htmlparser.Parser({
 
 	    onopentag: function(name, attribs){
-	    	// will need to create a printAttributes thing
-	    	var stringToPrint = "<div class=" + name + ">" + "&lt;" + name + " " + attribs + "&gt;</div>";
-	    	// console.log(stringToPrint);
-	    	parsedText += stringToPrint;
 	    	tagHash.addOpenTag(name);
 	    },
 
 	    onclosetag: function(name){
-	   		var stringToPrint = "<div class=" + name + ">" + "&lt;/" + name  +"&gt;</div>";
-	    	// console.log(stringToPrint);
-	    	parsedText += stringToPrint;
 	    	tagHash.addCloseTag(name);
-	    },
-
-	    ontext: function(text) {
-    	    parsedText += text;
-	    },
-
-	    oncdatastart: function(data) {
-	    	parsedText += data;
-	    },
-
-	    oncdataend: function(data) {
-	    	parsedText += data;
-	    },
-
-	    oncomment: function(data) {
-	    	parsedText += data;
-	    },
-
-	    oncommentend: function(data) {
-	    	parsedText += data;
-	    },
-
-	    onerror: function(data) {
-	    	console.log(error);
-	    },
-
-	    onprocessinginstruction: function(instruction) {
-		   	var stringToPrint = "&gt;!" + instruction + "" + "&lt;";
-	    	parsedText+= instruction;
-	    },
-
-	    onreset: function() {
-
 	    }
 	 },
 	{decodeEntities: true});
@@ -120,9 +76,6 @@ function injectSpans(string) {
     var strIndex = 0;
 
     var nextOpenBracket = string.indexOf(openTagBracket);
-    // I think I'm accidentally eating white space here. I need to concat the stuff that's NOT matched
-    // by the regexes. And ideally, I don't let JADE do the pre transform for me. Although I need to preserve
-    // the whitespace somehow.
 
     while (nextOpenBracket != -1) { 
     // 	console.log("strIndex = ", strIndex);
@@ -134,13 +87,10 @@ function injectSpans(string) {
 
     	// skip ahead to where we found that first '<'
     	string = string.substring(nextOpenBracket);
-    	// console.log("outputText=",chalk.yellow(outputText));
-    	// console.log("string=",chalk.green(string));
-		 // console.log("string: ",chalk.green(string));
 
-    	// Regex will find the first match for each of these, so we need to determine which 
-    	// is 'first' (in preferential order for matching b/c tag will match comments, and
-    	// directive will match comments.
+    	// Regex will find the first match for each of the patterns, so we need to determine which 
+    	// is 'first' (in preferential order for matching b/c tag will match directive, and
+    	// directive will match comments)
     	var commentText = commentRE.exec(string);
     	var directiveOrCDataText = directiveOrCDataRE.exec(string);
 	    var tagText = tagRE.exec(string);
@@ -166,33 +116,24 @@ function injectSpans(string) {
 
         if ((commentPosition != -1) && (commentPosition <= directivePosition) && (tagPosition >= commentPosition)) {
             // comment is more specific than directive.
-            // console.log("in comment: string = ", chalk.green(commentText[0]), "length = ", commentText[0].length);
             outputText+= entities.encode(commentText[0]);
-            // console.log("string substring = ", chalk.cyan(string.substring(commentText[0].length)));
 
             string = string.substring(commentText[0].length);
-
-            // console.log("string = ", chalk.magenta(string));
         }
         else if ((directivePosition != -1) && (directivePosition <= tagPosition)) {
             // directive is more specific than tag
-            // console.log("in directive:  ", chalk.magenta(directiveOrCDataText[0]));
             outputText += entities.encode(directiveOrCDataText[0]);
-
-
             string = string.substring(directiveOrCDataText[0].length);
-            // console.log("string = ", chalk.grey(string));
         }
         else if (tagPosition != -1) {
             // we have a tag!
             string =  string.substring(tagText[0].length);
             var tag = new Tag(tagText[0]);
             outputText += tag.encodedString();
-            // console.log("in tag:", chalk.yellow(tagText[0]));
 
         } 
         else {
-            // randomly matched "<" in the text? Seems unlikely, but we might as well include it.
+            // randomly matched "<" in the text? Seems unlikely, but encode & include it.
             outputText += entities.encode(string.charAt(nextOpenBracket));
             string =  string.substring(1);
     	}
@@ -200,16 +141,8 @@ function injectSpans(string) {
     }
 
     outputText += "</pre>";
-    // console.log("outputtext = ", outputText);
     return outputText;
 }
 
-
-function encode(string) {
-	// whatever this is, all we have to do is replace its first char with &lt; and its last with &gt;
-	var encodedString = "&lt;" + string.substring(1,string.length-1) + "&gt;";
-	// console.log("encodedString = ", encodedString);
-	return (encodedString)
-}
 
 module.exports = router;
