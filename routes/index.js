@@ -7,6 +7,8 @@ var TagHash = require('../models/taghash');
 var Tag = require('../models/tag');
 var Entities = require('html-entities').AllHtmlEntities;
 
+var fs = require('fs');
+
 
 var tagHash = new TagHash();
 var entities = new Entities();
@@ -23,6 +25,13 @@ router.get('/', function(req, res, next) {
 
 	 			var summaryTable = parseHTML(body);
 	 			var outputText = injectSpans(body);
+
+                console.log(body);
+// fs.writeFile("/Users/mcnair/Projects/application-engineer/output/output.txt", body, function(err) {
+//     if(err) {
+//         return console.log(err);
+//     }
+// });
 
    		 	  	res.render('index', { title: 'earlfetcher', theUrl: urlToFetch, summaryTable: summaryTable, retrievedHTML: outputText });
 	  		} else if (!error) {
