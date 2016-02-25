@@ -13,7 +13,6 @@ function TagHash() {
 	}
 
 	function addTag(name, type) {
-		console.log("addTag ", name, type);
 		if (!tagHash[name]) {
 			 tagHash[name] = {};
 			 tagHash[name][type] = 1;
@@ -29,7 +28,6 @@ function TagHash() {
 	}
 
 	this.getTagHash = function() {
-		console.log(tagHash);
 		return tagHash;
 	}
 }

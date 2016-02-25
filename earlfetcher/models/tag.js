@@ -35,9 +35,6 @@ function Tag(string) {
 
 	function parseTag(start, end) {
 		var newString = tagstring.substring(start,end);
-
-		console.log("newString = ", newString);
-
 		// the tag name is the first 'word' in the new string
 		// TBD - need to fix word boundary for hyphen
 		var re  = /(\w+)/;
@@ -46,6 +43,7 @@ function Tag(string) {
 		// if there's nothing here, we have a problem
 		name = results[0];
 		attributes = newString.substring(name.length).trim();
+		console.log(name + "!");;
 	}
 
 	// if it ends in "/>", it's a self-closing tag
@@ -79,16 +77,22 @@ function Tag(string) {
 Tag.prototype.encodedString = function() {
 
 		// can improve by not padding the space if no attributes
-
 		if (this.getType() === 'open') {
-			return "<div className=" + this.getName() + ">&lt;" + this.getName() + " " + this.getAttributes() + "&gt;</div>";
+			return "<span class=" + this.getName() + ">&lt;" + this.getName() + this.getAttributes() + "&gt;</span>";
 		} else if (this.getType() === 'close') {
-			return "<div className=" + this.getName() + ">&lt;/" + this.getName() +"&gt;</div>";
+			return "<span class=" + this.getName() + ">&lt;/" + this.getName() +"&gt;</span>";
 		} else if (this.getType() === 'selfclosing') {
-			return "<div className=" + this.getName() + ">&lt;" + this.getName() + " " + this.getAttributes() + "/&gt;</div>";
+			return "<span class=" + this.getName() + ">&lt;" + this.getName() + this.getAttributes() + "/&gt;</span>";
 		} 
 		else
 			return "";
+}
+
+Tag.prototype.encode = function(string) {
+	// whatever this is, all we have to do is replace its first char with &lt; and its last with &gt;
+	var encodedString = "&lt;" + string.substring(1,string.length-1) + "&gt;";
+	console.log("encodedString = ", encodedString);
+	return (encodedString)
 }
 
 Tag.prototype.getType = function () { return this.getType(); }

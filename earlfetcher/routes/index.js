@@ -15,14 +15,17 @@ router.get('/', function(req, res, next) {
 	console.log('urlToFetch: ' + urlToFetch);
 
 	var retrievedHTML = "";
+	var testText='<!DOCTYPE html><html><head><title>Express</title><link rel="stylesheet" href="/stylesheets/style.css"></head><body><h1>Express</h1><p>Welcome to Express</p><p>Welcome to Express</p><p>Welcome to Express</p><p>Welcome to Express</p></body></html>';
 
 	if (urlToFetch != undefined) {
 		request(urlToFetch, function (error, response, body) {
 	 		if (!error && response.statusCode == 200) {
 
 	 			var summaryTable = parseHTML(body);
+	 			var outputText = injectSpans(body);
+	 			console.log(body);
 
-   		 	  	res.render('index', { title: 'earlfetcher', theUrl: urlToFetch, summaryTable: summaryTable, retrievedHTML: body });
+   		 	  	res.render('index', { title: 'earlfetcher', theUrl: urlToFetch, summaryTable: summaryTable, retrievedHTML: outputText });
 	  		} else if (!error) {
 	  			res.render('index', { title: 'earlfetcher', theUrl: urlToFetch, retrievedHTML: "Could not fetch HTML: " + response.statusCode + " " + error + "." } );
 	  		} else {
@@ -38,8 +41,6 @@ router.get('/', function(req, res, next) {
 
 function parseHTML(rawHTML) {
 
-	var testText='<!DOCTYPE html><html><head><title>Express</title><link rel="stylesheet" href="/stylesheets/style.css"></head><body><h1>Express</h1><p>Welcome to Express</p><p>Welcome to Express</p><p>Welcome to Express</p><p>Welcome to Express</p></body></html>';
-;
 	var parsedText = "";
 
 	var parser = new htmlparser.Parser({
@@ -47,14 +48,14 @@ function parseHTML(rawHTML) {
 	    onopentag: function(name, attribs){
 	    	// will need to create a printAttributes thing
 	    	var stringToPrint = "<div class=" + name + ">" + "&lt;" + name + " " + attribs + "&gt;</div>";
-	    	console.log(stringToPrint);
+	    	// console.log(stringToPrint);
 	    	parsedText += stringToPrint;
 	    	tagHash.addOpenTag(name);
 	    },
 
 	    onclosetag: function(name){
 	   		var stringToPrint = "<div class=" + name + ">" + "&lt;/" + name  +"&gt;</div>";
-	    	console.log(stringToPrint);
+	    	// console.log(stringToPrint);
 	    	parsedText += stringToPrint;
 	    	tagHash.addCloseTag(name);
 	    },
@@ -94,63 +95,83 @@ function parseHTML(rawHTML) {
 	 },
 	{decodeEntities: true});
 
-	parser.write(testText);
+	parser.write(rawHTML);
 	parser.end();
 
 	var summaryTable = tagHash.getTagHash();
-
-	injectSpans(testText);
 	return summaryTable;
 };
 
-
-
 // at the moment, this just walks the string & only logs tags. The string itself should be returned unchanged.
 function injectSpans(string) {
-	var testText='<!DOCTYPE html><html><head><title>Express</title><link rel="stylesheet" href="/stylesheets/style.css"></head><body><h1>Express</h1><p>Welcome to Express</p><p>Welcome to Express</p><p>Welcome to Express</p><p>Welcome to Express</p></body></html>';
 
-	var outputText = "";
+	var outputText = "<pre>";
 	var openTagRE = /</;
 	var directiveOrCDataRE = /(<![\s\S]*?>)/;
 	var commentRE =  /(<!--[\s\S]*?-->)/;
     var tagRE=/<[^>]*?(?:(?:('|")[^\1]*?\1)[^>]*?)*>/;
 
+
     var nextOpenBracket = openTagRE.exec(string);
+
+    // I think I'm accidentally eating white space here. I need to concat the stuff that's NOT matched
+    // by the regexes. And ideally, I don't let JADE do the pre transform for me. Although I need to preserve
+    // the whitespace somehow.
 
     while (nextOpenBracket) { 
     	// if this is a comment, we want to grab the entire comment & just copy it over as-is.
-    	var commentText = commentRE.exec(string[nextOpenBracket.index]);
+    	// first, grab all the text up until that point & add it to output.
+    	// but length won't work b/c I'm adding chars with the substitution/encoding of HTML entities.
+
+    	outputText += string.substring(0, nextOpenBracket.index-1);
+    	string = string.substring(nextOpenBracket.index);
+    	console.log("outputText: ", outputText);
+    	console.log("eating the string, currently at: ", string);
+
+    	var commentText = commentRE.exec(string);
+
     	if (commentText) {
     		// copy it over & skip along!
-    		outputText+= commentText[0];
-    		string = string.substring(commentText.index + string.length);
+    		// outputText+= encode(commentText[0]);
+    		outputText+= encode(commentText[0]);
+    		string = string.substring(commentText[0].length);
     	} 
     	else {
-    		var directiveOrCDataText = directiveOrCDataRE.exec(string[nextOpenBracket.index]);
+    		var directiveOrCDataText = directiveOrCDataRE.exec(string.substring(nextOpenBracket.index));
     		if (directiveOrCDataText) {
  			    // copy it over & skip along!
-	    		outputText += directiveOrCDataText[0];
-	    		string = string.substring(directiveOrCDataText.index + string.length);
+	    		// outputText += encode(directiveOrCDataText[0]);
+	    		outputText += encode(directiveOrCDataText[0]);
+	    		string = string.substring(directiveOrCDataText[0].length);
 	    	}
 	    	else {
 	    		// pretty sure we have a tag here
-	    		    var thisTag = tagRE.exec(string);
-				    // console.log(thisTag);
+    		    var thisTag = tagRE.exec(string);
+			    console.log(thisTag);
 
-				    if(thisTag) {
-				        stringy = thisTag[0];
-				        console.log(stringy);
-				        string =  string.substring(thisTag.index + stringy.length);
-				        var tag = new Tag(thisTag[0]);
-				        outputText += tag.encodedString();
+			    if(thisTag) {
+			        aTag = thisTag[0];
+			        string =  string.substring(aTag[0].length);
+
+			        var tag = new Tag(thisTag[0]);
+			        outputText += tag.encodedString();
     			}
 	    	}
     	}
-     nextOpenBracket = openTagRE.exec(string);
+     	nextOpenBracket = openTagRE.exec(string);
     }
 
-    console.log(outputText);
+    outputText += "</pre>";
+    console.log("outputtext = ", outputText);
     return outputText;
+}
+
+
+function encode(string) {
+	// whatever this is, all we have to do is replace its first char with &lt; and its last with &gt;
+	var encodedString = "&lt;" + string.substring(1,string.length-1) + "&gt;";
+	console.log("encodedString = ", encodedString);
+	return (encodedString)
 }
 
 module.exports = router;
