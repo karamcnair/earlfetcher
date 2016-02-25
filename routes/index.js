@@ -6,6 +6,7 @@ var htmlparser = require("htmlparser2");
 var TagHash = require('../models/taghash');
 var Tag = require('../models/tag');
 var Entities = require('html-entities').AllHtmlEntities;
+var chalk = require('chalk');
 
 var fs = require('fs');
 
@@ -26,12 +27,12 @@ router.get('/', function(req, res, next) {
 	 			var summaryTable = parseHTML(body);
 	 			var outputText = injectSpans(body);
 
-                console.log(body);
-// fs.writeFile("/Users/mcnair/Projects/application-engineer/output/output.txt", body, function(err) {
-//     if(err) {
-//         return console.log(err);
-//     }
-// });
+                // console.log(body);
+fs.writeFile("/Users/mcnair/Projects/application-engineer/output/output.txt", body, function(err) {
+    if(err) {
+        return console.log(err);
+    }
+});
 
    		 	  	res.render('index', { title: 'earlfetcher', theUrl: urlToFetch, summaryTable: summaryTable, retrievedHTML: outputText });
 	  		} else if (!error) {
@@ -48,6 +49,8 @@ router.get('/', function(req, res, next) {
 
 
 function parseHTML(rawHTML) {
+
+    var outputHTML = "<pre>";
 
 	var parser = new htmlparser.Parser({
 
@@ -78,7 +81,7 @@ function injectSpans(string) {
 	var openTagRE = /</;
 	var directiveOrCDataRE = /(<![^>]*>)/i;
 	var commentRE =  /(<!--.*-->)/;
-	var scriptRE =  /(<script>*?<\/script>)/;
+	var scriptRE =  /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
     var tagRE=/<[^>]*?(?:(?:('|")[^\1]*?\1)[^>]*?)*>/;
     var strIndex = 0;
 
@@ -98,10 +101,12 @@ function injectSpans(string) {
     	// directive will match comments)
     	var commentText = commentRE.exec(string);
     	var directiveOrCDataText = directiveOrCDataRE.exec(string);
+        var scriptText = scriptRE.exec(string);
 	    var tagText = tagRE.exec(string);
         var commentPosition =  -1;
         var directivePosition = -1;
         var tagPosition = -1;
+        var scriptPosition = -1;
 
 	    if (commentText) {
             commentPosition = commentText.index;
@@ -109,6 +114,10 @@ function injectSpans(string) {
 
         if (directiveOrCDataText) {
             directivePosition = directiveOrCDataText.index;
+        }
+
+        if (scriptText) {
+            scriptPosition = scriptText.index;
         }
 
         if (tagText) {
@@ -125,11 +134,31 @@ function injectSpans(string) {
             outputText += entities.encode(directiveOrCDataText[0]);
             string = string.substring(directiveOrCDataText[0].length);
         }
+        else if ((scriptPosition != -1) && (scriptPosition <= tagPosition))  {
+            // we need to get everything in the script and encode it
+            // console.log("string: ", string, "scriptPos:" , scriptPosition, "scriptText: ", scriptText);
+
+            // the opening script tag may have attributes.
+            var openScriptTag = tagRE.exec(scriptText[0]);
+            var openScriptText = "<span class='script'>" + entities.encode(openScriptTag[0]) + "</span>";
+            var closeScriptText = "<span class='script'>" + entities.encode("</script>") + "</span>";
+
+            var textToAdd = openScriptText + 
+              entities.encode(scriptText[0].substring(openScriptTag[0].length, scriptText[0].substring.length - "</script>".length)) +
+               + closeScriptText;
+            console.log("script: ", chalk.magenta(scriptText[0]));
+            console.log("textToAdd: ", chalk.cyan(scriptText[0]));
+            outputText += textToAdd;
+
+            string = string.substring(scriptText[0].length);
+            console.log("string = ", chalk.green(string));
+        }
         else if (tagPosition != -1) {
             // we have a tag!
-            string =  string.substring(tagText[0].length);
             var tag = new Tag(tagText[0]);
             outputText += tag.encodedString();
+            string =  string.substring(tagText[0].length);
+
         } 
         else {
             // randomly matched "<" in the text? Seems unlikely, but encode & include it.
