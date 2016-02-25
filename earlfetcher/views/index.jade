@@ -2,7 +2,13 @@ extends layout
 
 block content
   h1= title
+
   p Welcome to #{title}
+  script(type='text/javascript').
+    $(document).ready(function() {
+                        alert("Hello CodeProject!");
+                        });
+
 
   div.requestedUrl
     form(name="requestedUrl", action="/", method="get")
@@ -14,11 +20,18 @@ block content
     p No url yet!
 
   if summaryTable
-    p !{summaryTable}
+    table
+      thead
+        tr
+          th Tag Name
+          th # Open
+          th # Close
+       each val, key in summaryTable
+          tr
+          td 
+            button(id='#{key}') #{key}
+          td #{val.open} 
+          td #{val.close}
 
-    p ---
-     each val, key in summaryTable
-         p #{key}: open: #{val.open} close: #{val.close}
-
-  if retrievedHTML
-    | !{retrievedHTML}
+    if retrievedHTML
+      | !{retrievedHTML}
