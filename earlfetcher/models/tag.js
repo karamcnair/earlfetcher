@@ -43,7 +43,6 @@ function Tag(string) {
 		// if there's nothing here, we have a problem
 		name = results[0];
 		attributes = newString.substring(name.length).trim();
-		console.log(name + "!");;
 	}
 
 	// if it ends in "/>", it's a self-closing tag
@@ -78,11 +77,11 @@ Tag.prototype.encodedString = function() {
 
 		// can improve by not padding the space if no attributes
 		if (this.getType() === 'open') {
-			return "<span class=" + this.getName() + ">&lt;" + this.getName() + this.getAttributes() + "&gt;</span>";
+			return "<span class=" + this.getName() + ">&lt;" + this.getName() + (this.getAttributes() ? " " + this.getAttributes() : "") + "&gt;</span>";
 		} else if (this.getType() === 'close') {
 			return "<span class=" + this.getName() + ">&lt;/" + this.getName() +"&gt;</span>";
 		} else if (this.getType() === 'selfclosing') {
-			return "<span class=" + this.getName() + ">&lt;" + this.getName() + this.getAttributes() + "/&gt;</span>";
+			return "<span class=" + this.getName() + ">&lt;" + this.getName() + (this.getAttributes() ? " " + this.getAttributes() : "") + "/&gt;</span>";
 		} 
 		else
 			return "";
@@ -91,7 +90,7 @@ Tag.prototype.encodedString = function() {
 Tag.prototype.encode = function(string) {
 	// whatever this is, all we have to do is replace its first char with &lt; and its last with &gt;
 	var encodedString = "&lt;" + string.substring(1,string.length-1) + "&gt;";
-	console.log("encodedString = ", encodedString);
+	// console.log("encodedString = ", encodedString);
 	return (encodedString)
 }
 

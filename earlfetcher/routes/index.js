@@ -11,8 +11,8 @@ var tagHash = new TagHash();
 router.get('/', function(req, res, next) {
 
 	var urlToFetch = req.query['theUrl']
-	console.log("req.query : ",  req.query);
-	console.log('urlToFetch: ' + urlToFetch);
+	// console.log("req.query : ",  req.query);
+	// console.log('urlToFetch: ' + urlToFetch);
 
 	var retrievedHTML = "";
 	var testText='<!DOCTYPE html><html><head><title>Express</title><link rel="stylesheet" href="/stylesheets/style.css"></head><body><h1>Express</h1><p>Welcome to Express</p><p>Welcome to Express</p><p>Welcome to Express</p><p>Welcome to Express</p></body></html>';
@@ -106,33 +106,38 @@ function parseHTML(rawHTML) {
 function injectSpans(string) {
 
 	var outputText = "<pre>";
+	var openTagBracket = '<';
 	var openTagRE = /</;
 	var directiveOrCDataRE = /(<![\s\S]*?>)/;
 	var commentRE =  /(<!--[\s\S]*?-->)/;
     var tagRE=/<[^>]*?(?:(?:('|")[^\1]*?\1)[^>]*?)*>/;
 
 
-    var nextOpenBracket = openTagRE.exec(string);
-
+    var nextOpenBracket = string.indexOf(openTagBracket);
     // I think I'm accidentally eating white space here. I need to concat the stuff that's NOT matched
     // by the regexes. And ideally, I don't let JADE do the pre transform for me. Although I need to preserve
     // the whitespace somehow.
 
-    while (nextOpenBracket) { 
+    while (nextOpenBracket != -1) { 
     	// if this is a comment, we want to grab the entire comment & just copy it over as-is.
     	// first, grab all the text up until that point & add it to output.
     	// but length won't work b/c I'm adding chars with the substitution/encoding of HTML entities.
 
-    	outputText += string.substring(0, nextOpenBracket.index-1);
-    	string = string.substring(nextOpenBracket.index);
-    	console.log("outputText: ", outputText);
-    	console.log("eating the string, currently at: ", string);
+    	outputText += string.substring(0, nextOpenBracket);
+
+    	// we know there's another one out there.
+       	var openTagText = openTagRE.exec(string);
+
+    	string = string.substring(openTagText.index);
+    	// console.log("openTagText: ", openTagText);
+    	// console.log("eating the string, currently at: ", string);
 
     	var commentText = commentRE.exec(string);
 
     	if (commentText) {
     		// copy it over & skip along!
-    		// outputText+= encode(commentText[0]);
+    		// console.log("commentText: ", commentText[0]);
+
     		outputText+= encode(commentText[0]);
     		string = string.substring(commentText[0].length);
     	} 
@@ -140,29 +145,28 @@ function injectSpans(string) {
     		var directiveOrCDataText = directiveOrCDataRE.exec(string.substring(nextOpenBracket.index));
     		if (directiveOrCDataText) {
  			    // copy it over & skip along!
-	    		// outputText += encode(directiveOrCDataText[0]);
+    			console.log("directiveOrCDataText: ", directiveOrCDataText[0]);
 	    		outputText += encode(directiveOrCDataText[0]);
 	    		string = string.substring(directiveOrCDataText[0].length);
 	    	}
 	    	else {
 	    		// pretty sure we have a tag here
     		    var thisTag = tagRE.exec(string);
-			    console.log(thisTag);
 
 			    if(thisTag) {
-			        aTag = thisTag[0];
-			        string =  string.substring(aTag[0].length);
+    				console.log("thisTag: ", thisTag[0]);
+			        string =  string.substring(thisTag[0].length);
 
 			        var tag = new Tag(thisTag[0]);
 			        outputText += tag.encodedString();
     			}
 	    	}
     	}
-     	nextOpenBracket = openTagRE.exec(string);
+     	nextOpenBracket = string.indexOf(openTagBracket);
     }
 
     outputText += "</pre>";
-    console.log("outputtext = ", outputText);
+    // console.log("outputtext = ", outputText);
     return outputText;
 }
 
@@ -170,7 +174,7 @@ function injectSpans(string) {
 function encode(string) {
 	// whatever this is, all we have to do is replace its first char with &lt; and its last with &gt;
 	var encodedString = "&lt;" + string.substring(1,string.length-1) + "&gt;";
-	console.log("encodedString = ", encodedString);
+	// console.log("encodedString = ", encodedString);
 	return (encodedString)
 }
 
