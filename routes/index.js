@@ -16,7 +16,6 @@ router.get('/', function(req, res, next) {
 	var urlToFetch = req.query['theUrl']
 
 	var retrievedHTML = "";
-	var testText='<!DOCTYPE html><html><head><title>Express</title><link rel="stylesheet" href="/stylesheets/style.css"></head><body><h1>Express</h1><p>Welcome to Express</p><p>Welcome to Express</p><p>Welcome to Express</p><p>Welcome to Express</p></body></html>';
 
 	if (urlToFetch != undefined) {
 		request(urlToFetch, function (error, response, body) {
@@ -24,7 +23,6 @@ router.get('/', function(req, res, next) {
 
 	 			var summaryTable = parseHTML(body);
 	 			var outputText = injectSpans(body);
-	 			console.log(body);
 
    		 	  	res.render('index', { title: 'earlfetcher', theUrl: urlToFetch, summaryTable: summaryTable, retrievedHTML: outputText });
 	  		} else if (!error) {
@@ -78,11 +76,9 @@ function injectSpans(string) {
     var nextOpenBracket = string.indexOf(openTagBracket);
 
     while (nextOpenBracket != -1) { 
-    // 	console.log("strIndex = ", strIndex);
     	// if this is a comment, we want to grab the entire comment & just copy it over as-is.
     	// first, grab all the text up until that point & add it to output.
     	// but length won't work b/c I'm adding chars with the substitution/encoding of HTML entities.
-        // console.log("in nextOpenBracket");
     	outputText += entities.encode(string.substring(0, nextOpenBracket));
 
     	// skip ahead to where we found that first '<'
@@ -100,24 +96,19 @@ function injectSpans(string) {
 
 	    if (commentText) {
             commentPosition = commentText.index;
-            // console.log("have comment at ", commentText.index );
 	    }
 
         if (directiveOrCDataText) {
             directivePosition = directiveOrCDataText.index;
-            // console.log("have directive at ", directiveOrCDataText.index );
         }
 
         if (tagText) {
             tagPosition = tagText.index;
         }
 
-        console.log("cp = ", commentPosition, "dp = ", directivePosition, "tp = ", tagPosition);
-
         if ((commentPosition != -1) && (commentPosition <= directivePosition) && (tagPosition >= commentPosition)) {
             // comment is more specific than directive.
             outputText+= entities.encode(commentText[0]);
-
             string = string.substring(commentText[0].length);
         }
         else if ((directivePosition != -1) && (directivePosition <= tagPosition)) {
@@ -130,7 +121,6 @@ function injectSpans(string) {
             string =  string.substring(tagText[0].length);
             var tag = new Tag(tagText[0]);
             outputText += tag.encodedString();
-
         } 
         else {
             // randomly matched "<" in the text? Seems unlikely, but encode & include it.
