@@ -3,9 +3,6 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-a {
-  color: #00B7FF;
-}
 
 #theTextField {
 	width: 40%;
@@ -18,6 +15,16 @@ a {
 
 .tagNameContainer, .tagCountContainer {
 	padding:20px;
+}
+
+#linkHome {
+	text-decoration: none;
+	color: black;
+}
+
+#linkHome:hover{
+	background-color: #99ccff;
+	text-decoration: none;
 }
 
 /* Table design taken from: http://mobifreaks.com/user-interface/responsive-and-seo-friendly-data-tables */

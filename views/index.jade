@@ -1,21 +1,21 @@
 extends layout
 
 block content
-  h1= title
+  h1
+    a#linkHome(href='/') #{title}
 
   h3 Please enter the URL to retrieve and parse 
+  - var beginningText = (theUrl ? theUrl : '');
   div.requestedUrl
     form#theForm(name="requestedUrl", action="/", method="get")
       input#theTextField(
         type="text", 
           name="theUrl", 
-          value='#{theUrl}')
+          value=beginningText)
     p.hint (including the "http://" or "https://")
 
   if theUrl
     h3 Displaying summary for: #{theUrl}
-  else
-    p No url yet!
 
   if summaryTable
     div.outerTable
