@@ -7,91 +7,46 @@
 // but it has to be valid (i.e. '<html attr=> >'' will not work)
 
 // var Tag = function(string) {
-function Tag(string) {
+function Tag(tagname, tagtype, tagattributes) {
 
 	// perform validation - return error/throw exception 
 	// if the preconditions aren't met.
-	string = string.trim();
-
-	var type = "";
-	var tagstring = string;
-	var name = "";
+var chalk = require('chalk');
+	var type = tagtype;
+	var name = tagname;
 	var attributes = "";
 
-	// We're guaranteed that the 1st char is "<", last 2 are "/>"
-	function parseSelfClosingTag() {
-		parseTag(1,tagstring.length-2);
-	}	
+	if (tagattributes) {
+		var keys = Object.keys(tagattributes)
 
-	// We're guaranteed 1st & last char are "<" and ">"
-	function parseOpenTag() {
-		parseTag(1,tagstring.length-1);
-	}
+		for (key in keys) {
+			// console.log(chalk.red("In new Tag"));
+			// console.log(keys[key], "'" + tagattributes[keys[key]] + "'" );
+			attributes += keys[key] + "='" + tagattributes[keys[key]] + "' ";
+		}; 
+	};
 
-	// We're guaranteed that the 1st 2 chars are "</", last 1 is ">"
-	function parseCloseTag() {
-		parseTag(2,tagstring.length-1);
-	}
-
-	function parseTag(start, end) {
-		var newString = tagstring.substring(start,end);
-		// the tag name is the first 'word' in the new string
-		// TBD - need to fix word boundary for hyphen
-		var re  = /(\w+)/;
-		var results = newString.match(re);
-
-		// if there's nothing here, we have a problem
-		name = results[0];
-		attributes = newString.substring(name.length).trim();
-	}
-
-	// if it ends in "/>", it's a self-closing tag
-	if(tagstring.substring(tagstring.length-2) === "/>")  
-		type = 'selfclosing';
-	// else if it starts with "</" it's a close tag
-	else if (tagstring.charAt(1) === '/') 
-		type = 'close';
-	else
-		type = 'open';
-
-	switch (type) {
-		case 'selfclosing':
-			parseSelfClosingTag();
-			break;
-		case 'close':
-			parseCloseTag();
-			break;
-		case 'open':
-			parseOpenTag();
-			break;
-		default:
-			console.log("in default case");
-	}
+	attributes = attributes.trim();
 
 	this.getType = function() { return type;}
 	this.getName = function() { return name;}
 	this.getAttributes = function() { return attributes;}
+
+	this.selfClosingVoidTags = ['area', 'base', 'br', 'col', 
+		'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 
+		'param', 'source', 'track', 'wbr'];
 }
 
 Tag.prototype.encodedString = function() {
 
 		// can improve by not padding the space if no attributes
 		if (this.getType() === 'open') {
-			return "<span class=" + this.getName() + ">&lt;" + this.getName() + (this.getAttributes() ? " " + this.getAttributes() : "") + "&gt;</span>";
+			return "<span class=" + this.getName() + ">&lt;" + this.getName() + ((this.getAttributes().length > 0) ? " " + this.getAttributes() : "") + "&gt;</span>";
 		} else if (this.getType() === 'close') {
 			return "<span class=" + this.getName() + ">&lt;/" + this.getName() +"&gt;</span>";
-		} else if (this.getType() === 'selfclosing') {
-			return "<span class=" + this.getName() + ">&lt;" + this.getName() + (this.getAttributes() ? " " + this.getAttributes() : "") + "/&gt;</span>";
 		} 
 		else
 			return "";
-}
-
-Tag.prototype.encode = function(string) {
-	// whatever this is, all we have to do is replace its first char with &lt; and its last with &gt;
-	var encodedString = "&lt;" + string.substring(1,string.length-1) + "&gt;";
-	// console.log("encodedString = ", encodedString);
-	return (encodedString)
 }
 
 Tag.prototype.getType = function () { return this.getType(); }
