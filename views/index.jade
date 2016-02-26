@@ -18,15 +18,13 @@ block content
     table
       thead
         tr
-          th Tag Name
-          th # Open
-          th # Close
-       each val, key in summaryTable
-          tr
-          td 
-            button(id='#{key}') #{key}
-          td #{val.open} 
-          td #{val.close}
+          each val, key in summaryTable
+            th
+              div.tagName(id='#{key}') #{key}
+        tr 
+          each val, key in summaryTable
+            td  #{val.open}
+
 
     if retrievedHTML
       | !{retrievedHTML}
