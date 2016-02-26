@@ -20,6 +20,8 @@ router.get('/', function(req, res, next) {
 		request(urlToFetch, function (error, response, body) {
 	 		if (!error && response.statusCode == 200) {
 
+	 			tagHash = new TagHash();
+
 	 			var outputText = parseHTML(body);
 	 			var summaryTable = tagHash.getTagHash();
 

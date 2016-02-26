@@ -3,28 +3,30 @@ extends layout
 block content
   h1= title
 
-  p Welcome to #{title}
-
+  h3 Please enter the URL to retrieve and parse 
   div.requestedUrl
-    form(name="requestedUrl", action="/", method="get")
-      input(type="text", name="theUrl")
+    form#theForm(name="requestedUrl", action="/", method="get")
+      input#theTextField(
+        type="text", 
+          name="theUrl", 
+          value='#{theUrl}')
+    p.hint (including the "http://" or "https://")
 
   if theUrl
-    p= theUrl
+    h3 Displaying summary for: #{theUrl}
   else
     p No url yet!
 
+  div#summaryBox
   if summaryTable
-    table
-      thead
-        tr
-          each val, key in summaryTable
-            th
-              div.tagName(id='#{key}') #{key}
-        tr 
-          each val, key in summaryTable
-            td  #{val.open}
+    div.outerTable
+      div.table-head
+        each val, key in summaryTable
+          div.column.tagName(id='#{key}') #{key}
+      div.row
+        each val, key in summaryTable
+          div.column(data-label='#{key}') #{val.open}
 
-
-    if retrievedHTML
-      | !{retrievedHTML}
+    div#retrievedHTMLContainer
+      if retrievedHTML
+        | !{retrievedHTML}

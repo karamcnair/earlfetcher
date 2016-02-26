@@ -7,6 +7,69 @@ a {
   color: #00B7FF;
 }
 
-.highlight {
-  background-color: yellow;
+#theTextField {
+	width: 40%;
+	font-size: 120%;
 }
+
+.hint {
+	font-size: 85%;
+}
+
+.tagNameContainer, .tagCountContainer {
+	padding:20px;
+}
+
+/* Table design taken from: http://mobifreaks.com/user-interface/responsive-and-seo-friendly-data-tables */
+
+.outerTable{
+	display:table;			/* Defines a Table */
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	border-bottom:2px solid #dddddd;
+	color:#8d8d8d;
+	margin:10px 0;
+}
+
+.table-head{
+	 display: table-header-group; /* Defines a table header group */
+}
+
+div.table-head .column.highlight {			/* Column inside the table-head */
+  	background-color: yellow; 
+	color:black;  
+	border-right:1px solid #5d5d5d;
+	border-bottom:none;
+}
+
+.table-head .column{			/* Column inside the table-head */
+	background:#666666;
+	color:#FFFFFF;
+	border-right:1px solid #5d5d5d;
+	border-bottom:none;
+}
+
+.table-head .column:hover{		/* Column hover inside the table-head */
+	background:#222222;
+}
+.row{
+	display:table-row;		/* Defines a table row */
+}
+.row .column:nth-child(1){		/* First column in a row */
+	border-left:1px solid #eeeeee;
+}
+.row:last-child .column{		/* column in a last row */
+	border-bottom:none;
+}
+.column{
+	display:table-cell;		/* Defines a table cell */
+	padding:10px 20px;
+	border-bottom:1px solid #eeeeee;
+	border-right:1px solid #eeeeee;
+	line-height:1.8em;
+}
+
+.highlight {
+  background-color: yellow; 
+}
+
