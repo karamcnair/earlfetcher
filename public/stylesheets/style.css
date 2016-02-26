@@ -73,3 +73,10 @@ div.table-head .column.highlight {			/* Column inside the table-head */
   background-color: yellow; 
 }
 
+#retrievedHTMLContainer {
+	border-left: thin solid grey;
+	border-top: thin solid grey;
+	padding-left: 10px;
+	padding-top: 5px;
+}
+
