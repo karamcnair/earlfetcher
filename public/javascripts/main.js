@@ -3,11 +3,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // use strict goes _inside_ a wrapping function
     // http://stackoverflow.com/questions/4462478/jslint-is-suddenly-reporting-use-the-function-form-of-use-strict
     "use strict";
-
-    var highlightColors = {};
-    var highightSaturationAndLightness = "100%, 80%";
-    var htmlTagNameDivs = document.getElementsByClassName('tagName');
     var lasthue = 0;
+    var htmlTagNameDivs = document.getElementsByClassName('tagName');
 
     function getDistinctHue() {
         // var hue = Math.floor((Math.random() * 360) + 1);
@@ -17,8 +14,29 @@ document.addEventListener('DOMContentLoaded', function () {
         return Math.floor(lasthue);
     }
 
+    function highlight(targetDiv, hue, enable) {
+        var huestring = "hsl(" + hue + ", 100%, 85%)";
+
+        if (enable) {
+            targetDiv.classList.add('highlight');
+            targetDiv.style.backgroundColor = huestring;
+        } else {
+            targetDiv.style.backgroundColor = '';
+            targetDiv.classList.remove('highlight');
+        }
+    }
+
+    var divs = document.getElementsByTagName('div');
+
     Array.prototype.map.call(htmlTagNameDivs, function (htmlTagNameDiv) {
         htmlTagNameDiv.addEventListener("click", function () {
+
+            var hue = this.getAttribute('data-highlight-hue');
+
+            if (!hue) {
+                hue = getDistinctHue();
+                this.setAttribute('data-highlight-hue', hue);
+            }
 
             var targetDivs = document.getElementsByClassName(this.id);
 
@@ -26,14 +44,14 @@ document.addEventListener('DOMContentLoaded', function () {
             // 'remove' as a first order function but that's not a high priority for
             // me right now compared with some UI/formatting work I want to finish.
             if (this.classList.contains('highlight')) {
-                this.classList.remove('highlight');
+                highlight(this, hue, false)
                 Array.prototype.map.call(targetDivs, function (targetDiv) {
-                    targetDiv.classList.remove("highlight");
+                    highlight(targetDiv, hue, false);
                 });
             } else {
-                this.classList.add('highlight');
+                highlight(this, hue, true)
                 Array.prototype.map.call(targetDivs, function (targetDiv) {
-                    targetDiv.classList.add("highlight");
+                    highlight(targetDiv, hue, true);
                 });
             }
         });

@@ -27,7 +27,6 @@ body {
 }
 
 /* Table design taken from: http://mobifreaks.com/user-interface/responsive-and-seo-friendly-data-tables */
-
 .outerTable{
 	display:table;			/* Defines a Table */
 	font-family:Arial, Helvetica, sans-serif;
@@ -49,7 +48,7 @@ div.table-head .column.highlight {			/* Column inside the table-head */
 }
 
 .table-head .column{			/* Column inside the table-head */
-	background:#666666;
+	background: hsl(0, 0%, 40%);
 	color:#FFFFFF;
 	border-right:1px solid #5d5d5d;
 	border-bottom:none;

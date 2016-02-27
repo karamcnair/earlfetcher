@@ -12,7 +12,6 @@ function Tag(tagname, tagtype, tagattributes) {
     if (tagattributes) {
 
         var keys = Object.keys(tagattributes);
-        console.log(keys);
         Array.prototype.map.call(keys, function (key) {
             attributes += key + "='" + tagattributes[key] + "' ";
         });
@@ -23,9 +22,11 @@ function Tag(tagname, tagtype, tagattributes) {
     this.getType = function () {
         return type;
     };
+
     this.getName = function () {
         return name;
     };
+
     this.getAttributes = function () {
         return attributes;
     };
