@@ -18,12 +18,19 @@ block content
 
   if summaryTable
     div.outerTable
-      div.table-head
-        each val, key in summaryTable
-          div.column.tagName(id='#{key}') #{key}
-      div.row
-        each val, key in summaryTable
-          div.column(data-label='#{key}') #{val.open}
+      - var columns = 12
+      - var keys =  Object.keys(summaryTable)
+      - for(var i = 0; i < keys.length; i+= columns)
+        div.table-head
+          - for(var j = 0; j < columns; j++)
+            - var text = keys[i+j]
+            div.column.tagName(id=text) #{text}
+        div.row
+           - for(var j = 0; j < columns; j++)
+             - console.log(summaryTable[keys[i+j]])
+             - var count = (summaryTable[keys[i+j]] ? summaryTable[keys[i+j]].open : "")
+              div.column.tagCount(data-label='#{summaryTable[keys[i+j]]}') #{count}
+        div.spacerRow
 
     div#retrievedHTMLContainer
       if retrievedHTML

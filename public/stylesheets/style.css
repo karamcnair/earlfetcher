@@ -59,6 +59,14 @@ div.table-head .column.highlight {			/* Column inside the table-head */
 .table-head .column:hover{		/* Column hover inside the table-head */
 	background:#222222;
 }
+
+.spacerRow{
+	display:table-row;		/* Defines a table row */
+	height: 5px;
+	border-top:1px solid #cccccc;
+	border-bottom: 1px solid #cccccc;
+}
+
 .row{
 	display:table-row;		/* Defines a table row */
 }
