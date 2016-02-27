@@ -5,10 +5,8 @@ var should = require('should'),
 
 describe('testing Tag', function () {
 
-console.log(tag.encodedString());
-
 	it('is an opening tag with attributes', function testHome(done) {
-		var tag = new Tag("<html thing='this' otherthing='that'>");
+		var tag = new Tag('html', 'open', {thing:'this', otherthing:'that'});
 		assert.equal(tag.getName(), "html");
 		assert.equal(tag.getType(),"open");
 		assert.equal(tag.getAttributes(),"thing='this' otherthing='that'");
@@ -16,7 +14,7 @@ console.log(tag.encodedString());
 	});
 
 	it('is an opening tag without attributes', function testHome(done) {
-		var tag = new Tag("<html >");
+		var tag = new Tag('html', 'open');
 		assert.equal(tag.getName(),"html");
 		assert.equal(tag.getType(),"open");
 		assert.equal(tag.getAttributes(),"");
@@ -24,25 +22,25 @@ console.log(tag.encodedString());
 	});
 
 	it('is a closing tag', function testHome(done) {
-		var tag = new Tag("</html>");
+		var tag = new Tag('html', 'close');
 		assert.equal(tag.getName(),"html");
 		assert.equal(tag.getType(), "close");
 		assert.equal(tag.getAttributes(),"");
 		done();
 	});
 
-	it('is a self-closing tag with attributes', function testHome(done) {
-		var tag = new Tag("<img src='http://www.google.com/img'  />");
+	it('is a void tag with attributes', function testHome(done) {
+		var tag = new Tag('img', 'open', {src:'http://www.google.com/img'});
 		assert.equal(tag.getName(),"img");
-		assert.equal(tag.getType(), "selfclosing");
+		assert.equal(tag.getType(), "open");
 		assert.equal(tag.getAttributes(),"src='http://www.google.com/img'");
 		done();
 	});
 
-	it('is a self-closing tag without attributes', function testHome(done) {
-		var tag = new Tag("<br />");
+	it('is a void tag without attributes', function testHome(done) {
+		var tag = new Tag('br', 'open');
 		assert.equal(tag.getName(),"br");
-		assert.equal(tag.getType(), "selfclosing");
+		assert.equal(tag.getType(), "open");
 		assert.equal(tag.getAttributes(),"");
 		done();
 	});

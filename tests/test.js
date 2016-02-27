@@ -4,9 +4,11 @@ var should = require('should'),
 
 describe('loading express', function () {
 
-	var homepageOutput = 
-	'<!DOCTYPE html><html><head><title>Express</title><link rel="stylesheet" href="/stylesheets/style.css"></head><body><h1>Express</h1><p>Welcome to Express</p></body></html>';
-
+	var homeHtml = '<!DOCTYPE html><html><head><title>earlfetcher</title><link rel="stylesheet" href="/stylesheets/style.css">' 
+	  + '<script src="/javascripts/main.js"></script></head><body><h1><a id="linkHome" href="/">earlfetcher</a></h1>' 
+	  + '<h3>Please enter the URL to retrieve and parse </h3><div class="requestedUrl">' 
+	  + '<form id="theForm" name="requestedUrl" action="/" method="get"><input id="theTextField" type="text" name="theUrl" value=""></form>'
+	  + '<p class="hint">(including the "http://" or "https://")</p></div></body></html>';
 	it('responds to /', function testHome(done) {
 		request(app)
 			.get('/')
@@ -18,7 +20,7 @@ describe('loading express', function () {
 		request(app)
 			.get('/')
 			.end( function(err, res) {
-				res.text.should.equal(homepageOutput);
+				res.text.should.equal(homeHtml);
 				done();
 			});
 	});
