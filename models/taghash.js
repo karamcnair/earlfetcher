@@ -2,7 +2,7 @@ function TagHash() {
 	
 	var tagHash = {};
 
-	// what's the right way to do this with open & closed?
+	
 	this.addOpenTag = function(name) {
 		// addTag(name, 'open'); 
 		addTag(name, 'open');
@@ -27,6 +27,9 @@ function TagHash() {
 		}
 	}
 
+	// Currently just returns the raw object b/c JADE is fine with it
+	// I might modify it to make it more friendly for dynamic table 
+	// resizing.
 	this.getTagHash = function() {
 		return tagHash;
 	}

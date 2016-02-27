@@ -13,7 +13,6 @@ describe('loading express', function () {
 		request(app)
 			.get('/')
 			.expect(200, done);
-
 	});
 
 	it('has correct HTML', function testHome(done) {
