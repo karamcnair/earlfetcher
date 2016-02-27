@@ -4,9 +4,13 @@ var Tag = require('./tag');
 var Entities = require('html-entities').AllHtmlEntities;
 var entities = new Entities();
 
-exports.parseHTML = function(rawHTML, tagHash) {
+
+// I don't really like the passing in of a pointer to tagHash
+// here. I'd prefer to be able to return both the hash & the HTML
+exports.parseHTML = function(rawHTML) {
 
     var outputHTML = "<pre>";
+    var tagHash = new TagHash();
 	var parser = new htmlparser.Parser({
 	    onopentag: function(name, attribs){
             var tag = new Tag(name, 'open', attribs);
@@ -42,7 +46,8 @@ exports.parseHTML = function(rawHTML, tagHash) {
 
     outputHTML += "</pre>";
 
-	return outputHTML;
+    // the second half of this is really weird but I want to get it working first
+	return {outputHTML: outputHTML, tagSummary: tagHash.getTagHash()} ;
 };
 
 exports.tidyUrl = function(url) {
@@ -51,8 +56,8 @@ exports.tidyUrl = function(url) {
 
     // if no protocol, prepend it
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
-        // this is slightly unsafe - there might be absolute gibberish 
-        // but it's definitely not a usable URL so this is still _better_
+        // this isn't ideal - we're not validating that it's a legal hostname 
+        // but what they supplied is definitely not a usable URL so this is still _better_
         url = 'http://' + url;
     }
 
