@@ -4,13 +4,13 @@ block content
   h1
     a#linkHome(href='/') #{title}
 
-  h3 Please enter the URL to retrieve and parse 
+  h3 Please enter the URL to retrieve and parse
   - var beginningText = (theUrl ? theUrl : '');
   div.requestedUrl
     form#theForm(name="requestedUrl", action="/", method="get")
       input#theTextField(
-        type="text", 
-          name="theUrl", 
+        type="text",
+          name="theUrl",
           value=beginningText)
 
   if theUrl
@@ -27,7 +27,7 @@ block content
             div.column.tagName(id=text) #{text}
         div.row
            - for(var j = 0; j < columns; j++)
-             - console.log(summaryTable[keys[i+j]])
+             - // console.log(summaryTable[keys[i+j]])
              - var count = (summaryTable[keys[i+j]] ? summaryTable[keys[i+j]].open : "")
               div.column.tagCount(data-label='#{summaryTable[keys[i+j]]}') #{count}
         div.spacerRow

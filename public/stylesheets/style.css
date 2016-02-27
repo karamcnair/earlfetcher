@@ -3,7 +3,6 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-
 #theTextField {
 	width: 40%;
 	font-size: 120%;
@@ -43,8 +42,8 @@ body {
 }
 
 div.table-head .column.highlight {			/* Column inside the table-head */
-  	background-color: yellow; 
-	color:black;  
+  	background-color: yellow;
+	color:black;
 	border-right:1px solid #5d5d5d;
 	border-bottom:none;
 }
@@ -85,7 +84,7 @@ div.table-head .column.highlight {			/* Column inside the table-head */
 }
 
 .highlight {
-  background-color: yellow; 
+  background-color: yellow;
 }
 
 #retrievedHTMLContainer {

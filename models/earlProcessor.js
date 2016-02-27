@@ -4,59 +4,57 @@ var Tag = require('./tag');
 var Entities = require('html-entities').AllHtmlEntities;
 var entities = new Entities();
 
-
-// I don't really like the passing in of a pointer to tagHash
-// here. I'd prefer to be able to return both the hash & the HTML
-exports.parseHTML = function(rawHTML) {
+exports.parseHTML = function (rawHTML) {
+    "use strict";
 
     var outputHTML = "<pre>";
     var tagHash = new TagHash();
-	var parser = new htmlparser.Parser({
-	    onopentag: function(name, attribs){
+    var parser = new htmlparser.Parser({
+        onopentag: function (name, attribs) {
             var tag = new Tag(name, 'open', attribs);
             outputHTML += tag.encodedString();
-	    	tagHash.addOpenTag(name);
-	    },
-	    onclosetag: function(name){
+            tagHash.addOpenTag(name);
+        },
+        onclosetag: function (name) {
             var tag = new Tag(name, 'close');
 
-            if(tag.selfClosingVoidTags.indexOf(name) < 0) {
+            if (tag.selfClosingVoidTags.indexOf(name) < 0) {
                 outputHTML += tag.encodedString();
 
-	            tagHash.addCloseTag(name);
+                tagHash.addCloseTag(name);
             }
-	    },
-        ontext: function(text) {
+        },
+        ontext: function (text) {
             outputHTML += entities.encode(text);
         },
-        onprocessinginstruction: function(name, data) {
+        onprocessinginstruction: function (name, data) {
             outputHTML += entities.encode("<" + data + ">");
         },
-        oncomment: function(text) {
-            outputHTML += entities.encode("<!--" + text +"-->");
+        oncomment: function (text) {
+            outputHTML += entities.encode("<!--" + text + "-->");
         },
-        onerror: function(error) {
+        onerror: function (error) {
             outputHTML += "<h3 color:'red'> Error in HTMLparser2: " + error + "</h3>";
         }
-	 },
-	{decodeEntities: true});
+    }, {decodeEntities: true});
 
-	parser.write(rawHTML);
-	parser.end();
+    parser.write(rawHTML);
+    parser.end();
 
     outputHTML += "</pre>";
 
-    // the second half of this is really weird but I want to get it working first
-	return {outputHTML: outputHTML, tagSummary: tagHash.getTagHash()} ;
+    return {outputHTML: outputHTML, tagSummary: tagHash.getTagHash()};
 };
 
-exports.tidyUrl = function(url) {
+exports.tidyUrl = function (url) {
+    "use strict";
+
     // get rid of whitespace
     url = url.trim();
 
     // if no protocol, prepend it
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
-        // this isn't ideal - we're not validating that it's a legal hostname 
+        // this isn't ideal - we're not validating that it's a legal hostname
         // but what they supplied is definitely not a usable URL so this is still _better_
         url = 'http://' + url;
     }
