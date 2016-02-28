@@ -89,3 +89,11 @@ div.table-head .column.highlight {			/* Column inside the table-head */
 	overflow: scroll;
 }
 
+#errorText {
+	font-size: 120%;
+	font-style: bold;
+	padding-top: 20px;
+	color: crimson;
+
+}
+

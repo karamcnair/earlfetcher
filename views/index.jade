@@ -13,26 +13,29 @@ block content
           name="theUrl",
           value=beginningText)
 
-  if theUrl
+  if errorText
+    div#errorText #{errorText}
+
+  else if theUrl
     h3 Displaying summary for: #{theUrl}
 
-  if summaryTable
-    div.outerTable
-      - var columns = 12
-      - var keys =  Object.keys(summaryTable)
-      - for(var i = 0; i < keys.length; i+= columns)
-        div.table-head
-          - for(var j = 0; j < columns; j++)
-            - var text = keys[i+j]
-            - if (text)
-              div.column.tagName(id=text) #{text}
-        div.row
-           - for(var j = 0; j < columns; j++)
-             - // console.log(summaryTable[keys[i+j]])
-             - var count = (summaryTable[keys[i+j]] ? summaryTable[keys[i+j]].open : "")
-             - if (count)
-               div.column.tagCount(data-label='#{summaryTable[keys[i+j]]}') #{count}
+    if summaryTable
+      div.outerTable
+        - var columns = 12
+        - var keys =  Object.keys(summaryTable)
+        - for(var i = 0; i < keys.length; i+= columns)
+          div.table-head
+            - for(var j = 0; j < columns; j++)
+              - var text = keys[i+j]
+              - if (text)
+                div.column.tagName(id=text) #{text}
+          div.row
+             - for(var j = 0; j < columns; j++)
+               - // console.log(summaryTable[keys[i+j]])
+               - var count = (summaryTable[keys[i+j]] ? summaryTable[keys[i+j]].open : "")
+               - if (count)
+                 div.column.tagCount(data-label='#{summaryTable[keys[i+j]]}') #{count}
 
-    div#retrievedHTMLContainer
-      if retrievedHTML
+      div#retrievedHTMLContainer
+        if retrievedHTML
         | !{retrievedHTML}
