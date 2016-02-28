@@ -82,22 +82,5 @@ describe('testing earlProcessor', function () {
         processedBody.tagSummary);
         done();
     });
-   
-
-    // it('is a void tag with attributes', function testHome(done) {
-    //     var tag = new Tag('img', 'open', {src: 'http://www.google.com/img'});
-    //     assert.equal(tag.getName(), 'img');
-    //     assert.equal(tag.getType(), 'open');
-    //     assert.equal(tag.getAttributes(), "src='http://www.google.com/img'");
-    //     done();
-    // });
-
-    // it('can fix a URL without a protocol', function testHome(done) {
-    //     var tag = new Tag('br', 'open');
-    //     assert.equal(tag.getName(), 'br');
-    //     assert.equal(tag.getType(), 'open');
-    //     assert.equal(tag.getAttributes(), '');
-    //     done();
-    // });
 });
 
