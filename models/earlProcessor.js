@@ -59,6 +59,10 @@ exports.tidyUrl = function (url) {
         url = 'http://' + url;
     }
 
+    // TBD: do we need to do anything else? If it's completely empty, do we fail out early
+    // rather than attempting the request retrieval? Is there any way to recover? (not really, so
+    // there's not a lot of point in trying to do more errorchecking/validation)
+
     return url.trim();
 };
 
