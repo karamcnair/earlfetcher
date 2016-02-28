@@ -16,9 +16,9 @@ describe('testing earlProcessor', function () {
     });
 
     it('is a relatively simple page', function testHome(done) {
-        var document = fs.readFileSync('tests/sampleData/example.txt', 'utf8');
+        var document = fs.readFileSync('tests/testData/example.txt', 'utf8');
         var processedBody = earlProcessor.parseHTML(document);
-        var expected = fs.readFileSync('tests/sampleData/exampleExpected.txt', 'utf8');
+        var expected = fs.readFileSync('tests/testData/exampleExpected.txt', 'utf8');
         assert.deepEqual(
             { html: { open: 1, close: 1 },
                 head: { open: 1, close: 1 },
@@ -36,9 +36,9 @@ describe('testing earlProcessor', function () {
     });
 
     it('is a much more complex page', function testHome(done) {
-        var document = fs.readFileSync('tests/sampleData/yahoo.txt', 'utf8');
+        var document = fs.readFileSync('tests/testData/yahoo.txt', 'utf8');
         var processedBody = earlProcessor.parseHTML(document);
-        var expected = fs.readFileSync('tests/sampleData/yahooExpected.txt', 'utf8');
+        var expected = fs.readFileSync('tests/testData/yahooExpected.txt', 'utf8');
         assert.deepEqual(
             { html: { open: 1, close: 1 },
             head: { open: 1, close: 1 },

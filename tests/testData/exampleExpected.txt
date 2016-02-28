@@ -1,0 +1,51 @@
+<pre>&lt;!doctype html&gt;
+<span class="html">&lt;html&gt;</span>
+<span class="head">&lt;head&gt;</span>
+    <span class="title">&lt;title&gt;</span>Example Domain<span class="title">&lt;/title&gt;</span>
+
+    <span class="meta">&lt;meta charset='utf-8'&gt;</span>
+    <span class="meta">&lt;meta http-equiv='Content-type' content='text/html; charset=utf-8'&gt;</span>
+    <span class="meta">&lt;meta name='viewport' content='width=device-width, initial-scale=1'&gt;</span>
+    <span class="style">&lt;style type='text/css'&gt;</span>
+    body {
+        background-color: #f0f0f2;
+        margin: 0;
+        padding: 0;
+        font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        
+    }
+    div {
+        width: 600px;
+        margin: 5em auto;
+        padding: 50px;
+        background-color: #fff;
+        border-radius: 1em;
+    }
+    a:link, a:visited {
+        color: #38488f;
+        text-decoration: none;
+    }
+    @media (max-width: 700px) {
+        body {
+            background-color: #fff;
+        }
+        div {
+            width: auto;
+            margin: 0 auto;
+            border-radius: 0;
+            padding: 1em;
+        }
+    }
+    <span class="style">&lt;/style&gt;</span>    
+<span class="head">&lt;/head&gt;</span>
+
+<span class="body">&lt;body&gt;</span>
+<span class="div">&lt;div&gt;</span>
+    <span class="h1">&lt;h1&gt;</span>Example Domain<span class="h1">&lt;/h1&gt;</span>
+    <span class="p">&lt;p&gt;</span>This domain is established to be used for illustrative examples in documents. You may use this
+    domain in examples without prior coordination or asking for permission.<span class="p">&lt;/p&gt;</span>
+    <span class="p">&lt;p&gt;</span><span class="a">&lt;a href='http://www.iana.org/domains/example'&gt;</span>More information...<span class="a">&lt;/a&gt;</span><span class="p">&lt;/p&gt;</span>
+<span class="div">&lt;/div&gt;</span>
+<span class="body">&lt;/body&gt;</span>
+<span class="html">&lt;/html&gt;</span>
+</pre>

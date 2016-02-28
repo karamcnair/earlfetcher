@@ -24,13 +24,14 @@ block content
         div.table-head
           - for(var j = 0; j < columns; j++)
             - var text = keys[i+j]
-            div.column.tagName(id=text) #{text}
+            - if (text)
+              div.column.tagName(id=text) #{text}
         div.row
            - for(var j = 0; j < columns; j++)
              - // console.log(summaryTable[keys[i+j]])
              - var count = (summaryTable[keys[i+j]] ? summaryTable[keys[i+j]].open : "")
-              div.column.tagCount(data-label='#{summaryTable[keys[i+j]]}') #{count}
-        div.spacerRow
+             - if (count)
+               div.column.tagCount(data-label='#{summaryTable[keys[i+j]]}') #{count}
 
     div#retrievedHTMLContainer
       if retrievedHTML
