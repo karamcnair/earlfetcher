@@ -22,10 +22,20 @@ router.get('/', function (req, res) {
                 // (clearly 'title' is not a terribly valuable parameter to pass into JADE)
                 res.render('index', {title: 'earlfetcher', theUrl: urlToFetch, summaryTable: summaryTable, retrievedHTML: outputText});
             } else if (!error) {
-                res.render('index', {title: 'earlfetcher', theUrl: urlToFetch, retrievedHTML: "Could not fetch HTML: " + response.statusCode + " " + error + "."});
+                res.render('index', {title: 'earlfetcher', theUrl: urlToFetch, summaryTable: {}, retrievedHTML: "Could not fetch HTML. HTTP response code:" + response.statusCode + ". " + error + "."});
             } else {
                 console.log(error);
-                res.render('index', {title: 'earlfetcher', theUrl: urlToFetch, retrievedHTML: error});
+
+                var errString = "";
+                switch(error.code) {
+                    case 'ENOTFOUND':
+                        errString = "The host for URL '" + urlToFetch + "' could not be resolved. Please try it in your browser's address bar & make sure it's available.";
+                        break;
+                    default:
+                        errString = "Our apologies, we were unable to retreive HTML for '" + urlToFetch + "'. The reply from the network was: " + error.toString();
+                }
+                console.log(errString);
+                res.render('index', {title: 'earlfetcher', theUrl: urlToFetch, summaryTable: {}, retrievedHTML: errString});
             }
         });
     } else {
