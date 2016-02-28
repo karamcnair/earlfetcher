@@ -25,7 +25,7 @@ exports.parseHTML = function (rawHTML) {
             }
         },
         ontext: function (text) {
-            outputHTML += entities.encode(text);
+            outputHTML += text;
         },
         onprocessinginstruction: function (name, data) {
             outputHTML += entities.encode("<" + data + ">");

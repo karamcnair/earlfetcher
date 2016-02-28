@@ -40,11 +40,11 @@ Tag.prototype.encodedString = function () {
     "use strict";
 
     if (this.getType() === 'open') {
-        return "<span class=" + this.getName() + ">&lt;" + this.getName() + ((this.getAttributes().length > 0)
+        return "<span class=\"" + this.getName() + "\">&lt;" + this.getName() + ((this.getAttributes().length > 0)
             ? " " + this.getAttributes()
             : "") + "&gt;</span>";
     } else if (this.getType() === 'close') {
-        return "<span class=" + this.getName() + ">&lt;/" + this.getName() + "&gt;</span>";
+        return "<span class=\"" + this.getName() + "\">&lt;/" + this.getName() + "&gt;</span>";
     } else {
         return "";
     }
