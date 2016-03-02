@@ -3,6 +3,11 @@ var router = express.Router();
 var request = require('request');
 var earlProcessor = require('../models/earlProcessor');
 
+var supportedContentTypes = [
+    "text/html",
+    "text/plain"
+];
+
 router.get('/', function (req, res) {
     "use strict";
 
@@ -13,7 +18,7 @@ router.get('/', function (req, res) {
         urlToFetch = earlProcessor.tidyUrl(urlToFetch);
 
         request(urlToFetch, function (error, response, body) {
-            if (!error && response.statusCode === 200) {
+            if (!error && response.statusCode === 200 && supportedContentTypes[response.headers['content-type']]) {
 
                 var processedBody = earlProcessor.parseHTML(body);
                 var summaryTable = processedBody.tagSummary;
@@ -21,6 +26,8 @@ router.get('/', function (req, res) {
 
                 // (clearly 'title' is not a terribly valuable parameter to pass into JADE)
                 res.render('index', {title: 'earlfetcher', theUrl: urlToFetch, summaryTable: summaryTable, retrievedHTML: outputText});
+            } else if (!error && !supportedContentTypes[response.headers['content-type']]) {
+                res.render('index', {title: 'earlfetcher', theUrl: urlToFetch, summaryTable: {}, retrievedHTML: "The retrieved content-type: '" + response.headers['content-type'] + "' is not supported. earlfetcher parses HTML code only."});
             } else if (!error) {
                 res.render('index', {title: 'earlfetcher', theUrl: urlToFetch, summaryTable: {}, retrievedHTML: "Could not fetch HTML. HTTP response code:" + response.statusCode + ". " + error + "."});
             } else {
