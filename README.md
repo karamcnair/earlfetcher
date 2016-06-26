@@ -1,6 +1,6 @@
 ## EarlFetcher
 
-Kara McNair's A coding exercise but I'm not going to include the details of the company or position to make this less Googlable for other applicants.
+A coding exercise (but I'm not going to include the details of the company or position to make this less Googlable for other applicants.)
 
 ### Overview
 
